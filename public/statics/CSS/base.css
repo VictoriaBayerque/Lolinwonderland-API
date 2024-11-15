@@ -3,8 +3,7 @@ span{
     font-weight: 600;
     color: rgb(165, 56, 107);
 }
-a:link, a:visited, a:active {
-    color: rgb(0, 0, 0);
+a {
     text-decoration: none !important;
 }
 a:hover {
@@ -49,9 +48,10 @@ a:hover {
 /*-------------------------------------- LIBRARY --------------------------------------*/
 .add-btn, .edit-btn, .delete-btn, .goBack-form {
     color: rgb(0, 0, 0) !important;
-    text-decoration: none !important;
 }
 .more-btn, .goBack, .readBook-btn, .add-btn {
     color: white !important;
-    text-decoration: none !important;
+}
+.bFromHome-btn, .aFromHome-btn {
+    color:rgb(165, 56, 107);
 }

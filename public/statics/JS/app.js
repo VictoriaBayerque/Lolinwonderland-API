@@ -25,6 +25,21 @@ async function home() {
     } catch (error) {
         console.log(error);
     }
+
+    const toLibraryCatBTN = document.querySelectorAll('.bFromHome-btn');
+    for(const btn of toLibraryCatBTN) {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            getLibrary();
+        });
+    }
+    const toAuthorsCatBTN = document.querySelectorAll('.aFromHome-btn');
+    for(const btn of toAuthorsCatBTN) {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            getAuthors();
+        });
+    }
     
 }
 
@@ -37,6 +52,11 @@ const authorsBTN = document.querySelector('.authorsBtn');
 authorsBTN.addEventListener('click', (e) => {
     e.preventDefault();
     getAuthors();
+})
+const loginBTN = document.querySelector('#login-btn');
+loginBTN.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginForm();
 })
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1160,6 +1180,66 @@ async function knowMore(id) {
     })
 }
 
+/////////////////////////////////////////////////////////////////////////
+///------------------------------ USERS ------------------------------///
+////////////////////////////////////////////////////////////////////////
+
+function loginForm() {
+    let main = document.querySelector('#main');
+    main.innerHTML = `
+        <section
+        class="container justify-content-center"
+        style="width: 20rem;">
+            <form
+            id="login-form"
+            action="loginuser"
+            method="POST">
+
+                <div class="form-group">
+                    <label style="font-weight: bold;">Username</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    name="username">
+                </div>
+                <br>
+                <div class="form-group">
+                    <label style="font-weight: bold;">Password</label>
+                    <input
+                    type="password"
+                    class="form-control"
+                    name="password">
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <button
+                    type="submit"
+                    name="submit"
+                    style="
+                    background-color: rgb(165, 56, 107);
+                    margin-top: 2rem;
+                    margin-bottom: 3rem;
+                    padding: 0.3rem;
+                    padding-left: 0.5rem;
+                    padding-right: 0.5rem;
+                    border: 0px;
+                    border-radius: 0.4rem;
+                    color: white;
+                    ">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </section>
+    `;
+
+    let loginFormData = document.querySelector('#login-form');
+    loginFormData.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // submitLogin(loginFormData);
+        console.log('hacer funcion submitLogin');
+    });
+}
 
 
 
