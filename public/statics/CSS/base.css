@@ -1,0 +1,57 @@
+/*----------------------------------GENERAL----------------------------------*/
+span{
+    font-weight: 600;
+    color: rgb(165, 56, 107);
+}
+a:link, a:visited, a:active {
+    color: rgb(0, 0, 0);
+    text-decoration: none !important;
+}
+a:hover {
+    cursor: pointer;
+}
+
+/*----------------------------------BASE----------------------------------*/
+.mynav{
+    display: block;
+    background-color: rgb(165, 56, 107);
+    margin-bottom: 5rem;
+}
+.dark-section {
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+.light-section {
+    background-color: rgb(255, 255, 255);
+    color: black;
+}
+.btn-main {
+    background-color: rgb(165, 56, 107);
+    padding: 0.3rem;
+}
+/*-------------------------------------- HOME --------------------------------------*/
+.sectiontitles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.sectiontitles h2 {
+    font-weight: 700;
+    border-bottom: solid 0.2rem rgb(165, 56, 107);
+    
+}
+.sectiontitles img:hover, .sectiontitles h2:hover {
+    transform: scale(1.1,1.1);
+    transition: 0.3s;
+}
+
+
+/*-------------------------------------- LIBRARY --------------------------------------*/
+.add-btn, .edit-btn, .delete-btn, .goBack-form {
+    color: rgb(0, 0, 0) !important;
+    text-decoration: none !important;
+}
+.more-btn, .goBack, .readBook-btn, .add-btn {
+    color: white !important;
+    text-decoration: none !important;
+}

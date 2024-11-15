@@ -1,0 +1,51 @@
+<?php require 'templates/layout/header.phtml' ?>
+    <section
+    class="container justify-content-center"
+    style="width: 20rem;">
+        <form
+        action="loginuser"
+        method="POST">
+
+            <div class="form-group">
+                <label style="font-weight: bold;">Username</label>
+                <input
+                type="text"
+                class="form-control"
+                name="username">
+            </div>
+            <br>
+            <div class="form-group">
+                <label style="font-weight: bold;">Password</label>
+                <input
+                type="password"
+                class="form-control"
+                name="password">
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button
+                type="submit"
+                name="submit"
+                value="loginuser"
+                style="
+                background-color: rgb(165, 56, 107);
+                margin-top: 2rem;
+                padding: 0.3rem;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                border: 0px;
+                border-radius: 0.4rem;
+                color: white;
+                ">
+                    Login
+                </button>
+            </div>
+        </form>
+        <!-- QUEDA COMENTADO POR SI HABILITO EL REGISTRO PARA USUARIOS.
+        <div class="d-flex flex-column align-items-center">
+            <p>Do not you have an account yet?</p>
+            <a href="registerform" class="btn-primary">Register</a>
+        </div> -->
+    </section>
+
+<?php require './templates/layout/footer.phtml'; ?>

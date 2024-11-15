@@ -1,0 +1,85 @@
+<?php require 'templates/layout/header.phtml' ?>
+    <section
+    class="container justify-content-center"
+    style="width: 20rem;">
+        <form
+        action="registeruser"
+        method="POST">
+
+            <div class="form-group">
+                <label style="font-weight: bold;">Name</label>
+                <input
+                type="text"
+                class="form-control"
+                name="name">
+            </div>
+            <br>
+            <div class="form-group">
+                <label style="font-weight: bold;">Lastname</label>
+                <input
+                type="text"
+                class="form-control"
+                name="lastname">
+            </div>
+            <br>
+            <div class="form-group">
+                <label style="font-weight: bold;">Email</label>
+                <input
+                type="text"
+                class="form-control"
+                name="email">
+            </div>
+            <br>
+            <div class="form-group">
+                <label style="font-weight: bold;">Username</label>
+                <input
+                type="text"
+                class="form-control"
+                name="username">
+            </div>
+            <br>
+            <div class="form-group">
+                <label style="font-weight: bold;">Password</label>
+                <input
+                type="text"
+                class="form-control"
+                name="password">
+            </div>
+            <div class="d-flex justify-content-center">
+                <button
+                type="submit"
+                name="submit"
+                value="registeruser"
+                style="
+                background-color: rgb(165, 56, 107);
+                margin-top: 2rem;
+                padding: 0.3rem;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                border: 0px;
+                border-radius: 0.4rem;
+                color: white;
+                ">
+                    Submit
+                </button>
+            </div>
+        </form>
+        <div class="d-flex flex-column align-items-center" style= "margin-top: 4rem;">
+            <p>Do you already have an account?</p>
+            <a
+            href="loginform"
+            style="
+            background-color: rgb(165, 56, 107);
+            margin-top: 0.2rem;
+            padding: 0.3rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            border: 0px;
+            border-radius: 0.4rem;
+            color: white;
+            ">
+                Log in
+            </a>
+        </div>
+    </section>
+<?php require './templates/layout/footer.phtml'; ?>

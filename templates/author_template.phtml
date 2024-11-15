@@ -1,0 +1,32 @@
+<?php require './templates/layout/header.phtml'; ?>
+<div class="container">
+    <div class="card-body justify-content-center">
+        <img
+        class="card-img"
+        src="<?php echo BASE_URL; ?>public/statics/images/authors/<?php echo $author->author_img; ?>"
+        style="width: 20rem;"
+        alt="Card image">
+        <div class="">
+            <h5 class="card-title"><?php echo htmlspecialchars($author->author_name)?></h5>
+            <h6 class="card-subtitle mb-2 text-muted"><?=$author->author_age?> years old</h6>
+            <p class="card-text">Active since: <?=$author->author_activity?></p>
+        </div>
+        <div>
+            <h6>Libros del autor: </h6>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end"style="margin-top: 4rem; margin-bottom: 5rem;">
+        <a
+        href="<?php echo BASE_URL; ?>authors"
+        style="
+        background-color: rgb(165, 56, 107);
+        padding: 0.3rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        border-radius: 0.4rem;
+        color: white;">
+            Go back
+        </a>
+    </div>
+</div>
+<?php require './templates/layout/footer.phtml'; ?>
