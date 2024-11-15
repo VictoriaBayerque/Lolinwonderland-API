@@ -1,5 +1,5 @@
 # Lolinwonderland.
-Sitio web de reseñas literarias utilizando server side rendering con PHP y MySQL.
+Sitio web de reseñas literarias utilizando client side rendering con JavaScript.
 
 # Importar la base de datos.
 Importar el archivo 'lolinwonderland_db.sql' dentro de PHPMyAdmin.
@@ -15,10 +15,10 @@ Las funciones de añadir, modificar y eliminar tanto libros como autores solo po
 
 # Endpoints.
 La API cuenta con distintos endpoints para poder manipular los datos almacenados en la base de datos.
-- DATO IMPORTANTE a tener en cuenta:
+- DATO IMPORTANTE a tener en cuenta.
 En el archivo "public/statics/JS/app.js", la URL base (es decir: 'http://localhost/Web2/3er-entrega/api/') está asignada a la constante apiUrl, por lo que debe ser modificada antes de correr el código. Los ejemplos dados debajo son utilizando la variable para practicidad.
 
-- endpoint: 'library' y verbo: 'GET'
+- endpoint: 'library' y verbo: 'GET'.
 Con este endpoint y utilizando un verbo GET, llamamos a la función getAllBooks de LibraryController y conseguimos traer todos los libros que esten en la tabla de library.
 Fetch de ejemplo:
 
@@ -26,7 +26,7 @@ Fetch de ejemplo:
                         
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl en app.js)
 
-- endpoint: 'library/:id', verbo: 'GET'
+- endpoint: 'library/:id', verbo: 'GET'.
 Con este endpoint y utilizando un verbo GET, llamando a la función getBook de LibraryController y conseguimos traer, de la base de datos, aquel libro que posea el id pasado por parámetro.
 Fetch de ejemplo:
 
@@ -34,7 +34,7 @@ Fetch de ejemplo:
                         
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
 
-- endpoint: 'library', verbo: 'POST'
+- endpoint: 'library', verbo: 'POST'.
 Con este endpoint y utilizando un verbo POST, llamaremos a la función addBook de LibraryController para poder añadir un libro nuevo a la tabla de library en la base de datos.
 Fetch de ejemplo:
 
@@ -46,7 +46,7 @@ Fetch de ejemplo:
 
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
 
-- endpoint: 'library/:id', verbo: 'DELETE'
+- endpoint: 'library/:id', verbo: 'DELETE'.
 Con este endpoint y utilizando el verbo DELETE, llamaremos a la función deleteBook de LibraryController para poder eliminar el libro correspondiente al id pasado por parámetro de la base de datos.
 Fetch de ejemplo:
 
@@ -54,7 +54,7 @@ Fetch de ejemplo:
                     
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
                 
-- endpoint: 'library/:id', verbo: 'PUT'
+- endpoint: 'library/:id', verbo: 'PUT'.
 Con este endpoint y utilizando el verbo PUT, llamaremos a la función updateBook de LibraryController para poder cambiar los datos del libro de la base de datos que corresponda al id proporcionado por parámetro.
 Fetch de ejemplo:
 
@@ -66,7 +66,7 @@ Fetch de ejemplo:
                     
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
 
-- endpoint: 'authors' y verbo: 'GET'
+- endpoint: 'authors' y verbo: 'GET'.
 Con este endpoint y utilizando un verbo GET, llamamos a la función getAll de AuthorsController y conseguimos traer todos los autores que esten en la tabla de authors.
 Fetch de ejemplo:
 
@@ -74,7 +74,7 @@ Fetch de ejemplo:
                         
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl en app.js)
 
-- endpoint: 'authors/:id', verbo: 'GET'
+- endpoint: 'authors/:id', verbo: 'GET'.
 Con este endpoint y utilizando un verbo GET, llamando a la función getAuthor de AuthorsController y conseguimos traer, de la base de datos, aquel autor que posea el id pasado por parámetro.
 Fetch de ejemplo:
 
@@ -82,7 +82,7 @@ Fetch de ejemplo:
                         
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
 
-- endpoint: 'authors', verbo: 'POST'
+- endpoint: 'authors', verbo: 'POST'.
 Con este endpoint y utilizando un verbo POST, llamaremos a la función addAuthor de AuthorsController para poder añadir un autor nuevo a la tabla de autores en la base de datos.
 Fetch de ejemplo:
 
@@ -94,7 +94,7 @@ Fetch de ejemplo:
 
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
 
-- endpoint: 'authors/:id', verbo: 'DELETE'
+- endpoint: 'authors/:id', verbo: 'DELETE'.
 Con este endpoint y utilizando el verbo DELETE, llamaremos a la función deleteAuthor de AuthorController para poder eliminar el autor correspondiente al id pasado por parámetro de la base de datos.
 Fetch de ejemplo:
 
@@ -102,7 +102,7 @@ Fetch de ejemplo:
                     
                 (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
                 
-- endpoint: 'authors/:id', verbo: 'PUT'
+- endpoint: 'authors/:id', verbo: 'PUT'.
 Con este endpoint y utilizando el verbo PUT, llamaremos a la función updateAuthor de AuthorsController para poder cambiar los datos del autor de la base de datos que corresponda al id proporcionado por parámetro.
 Fetch de ejemplo:
 
