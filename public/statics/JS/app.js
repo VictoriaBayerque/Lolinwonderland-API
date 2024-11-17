@@ -8,7 +8,9 @@ let authors = [];
 ///------------------------------ HOME ------------------------------///
 ///////////////////////////////////////////////////////////////////////
 
-document.addEventListener('DOMContentLoaded', home());
+document.addEventListener('DOMContentLoaded', home);
+const session = localStorage.getItem('userSession');
+const authUser = JSON.parse(session);
 
 async function home() {
 
@@ -26,6 +28,8 @@ async function home() {
         console.log(error);
     }
 
+    
+
     const toLibraryCatBTN = document.querySelectorAll('.bFromHome-btn');
     for(const btn of toLibraryCatBTN) {
         btn.addEventListener('click', (e) => {
@@ -40,6 +44,17 @@ async function home() {
             getAuthors();
         });
     }
+
+    if (authUser) {
+        console.log(authUser);
+
+        const hiSpan = document.querySelector('.greetSpan');
+        hiSpan.innerHTML = `${authUser.username}`;
+
+        const hiDiv = document.querySelector('.greetDiv');
+        hiDiv.style.display = 'block';
+ 
+    }
     
 }
 
@@ -47,23 +62,38 @@ const libraryBTN = document.querySelector('.libraryBtn');
 libraryBTN.addEventListener('click', (e) => {
     e.preventDefault();
     getLibrary();
-})
+});
 const authorsBTN = document.querySelector('.authorsBtn');
 authorsBTN.addEventListener('click', (e) => {
     e.preventDefault();
     getAuthors();
-})
+});
 const loginBTN = document.querySelector('#login-btn');
 loginBTN.addEventListener('click', (e) => {
     e.preventDefault();
     loginForm();
-})
+});
+
+const logoutBTN = document.querySelector('#logout-btn');
+logoutBTN.addEventListener('click', (e) => {
+    e.preventDefault();
+    logout();
+});
+
+if(!authUser) {
+    const loginBTN = document.querySelector('#login-btn');
+    loginBTN.style.display = 'block';
+} else {
+    const logoutBTN = document.querySelector('#logout-btn');
+    logoutBTN.style.display = 'block';
+}
 
 ///////////////////////////////////////////////////////////////////////////
 ///------------------------------ LIBRARY ------------------------------///
 //////////////////////////////////////////////////////////////////////////
 
 async function getLibrary(orderby = null) {
+    
     if(orderby !== null) {
         try {
             const responseLibrary = await fetch(apiUrl + 'library?order=' + orderby);
@@ -113,6 +143,12 @@ function sliceSummary (summary) {
 }
 
 async function displayLibrary(orderby = null) {
+    let token;
+    if(session) {
+        token = await verifySession(authUser.username, authUser.password);
+    }
+    
+
     let bigBox = "";
     try {
 
@@ -181,7 +217,6 @@ async function displayLibrary(orderby = null) {
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <a
-                        href="#"
                         data-book="${book.book_id}"
                         class="readBook-btn more-btn"
                         style="
@@ -194,8 +229,7 @@ async function displayLibrary(orderby = null) {
                         ">
                             Read more
                         </a>
-                        <!-- <?php if(isset($_SESSION['username'])): ?> -->
-                            <div>
+                            <div class="actionsBox">
                                 <a data-book="${book.book_id}" class="card-link edit-btn">
                                     Editar
                                 </a>
@@ -203,7 +237,6 @@ async function displayLibrary(orderby = null) {
                                     Borrar
                                 </a>
                             </div>
-                        <!-- <?php endif; ?> -->
                     </div>
                 </div>
             </div>
@@ -281,6 +314,14 @@ async function displayLibrary(orderby = null) {
         });
     }
     
+    if(!token) {
+        addBookBTN.style.display = 'none';
+        const actionsBox = document.querySelectorAll('.actionsBox');
+        for (const box of actionsBox) {
+            box.style.display = 'none';
+        }
+    }
+    
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -288,7 +329,12 @@ async function displayLibrary(orderby = null) {
 ////////////////////////////////////////////////////////////////////////
 
 async function displayAddBookForm() {
-
+    if(authUser) {
+        await verifySession(authUser.username, authUser.password);
+    } else {
+        showError('You must log in to add a new book.');
+        throw new Error('You must log in to add a new book.');
+    }
     try {
 
         const response = await fetch('form_addbook.html');
@@ -344,6 +390,14 @@ async function authorsSelect() {
 }
 
 async function displayEditForm(id) {
+
+    if(authUser) {
+        await verifySession(authUser.username, authUser.password);
+    } else {
+        showError('You must log in to add a new book.');
+        throw new Error('You must log in to add a new book.');
+    }
+
     const bookID = id;
     let book;
     try {
@@ -460,7 +514,14 @@ async function displayEditForm(id) {
 
 
 async function submitBook(addBookForm) {
-    
+    let token;
+    if(authUser) {
+        token = await verifySession(authUser.username, authUser.password);
+    } else {
+        showError('You must log in to add a new book.');
+        throw new Error('You must log in to add a new book.');
+    }
+
     let data = new FormData(addBookForm);
    
     if(data.get('book_img')) {
@@ -468,10 +529,14 @@ async function submitBook(addBookForm) {
     }
 
     try {
+        console.log(data);
 
         let r = await fetch(
             apiUrl + 'library', {
                 method: "POST",
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                },
                 body: data
             }
         );
@@ -493,6 +558,14 @@ async function submitBook(addBookForm) {
 }
 
 async function saveBook(editBookForm, bookID) {
+    let token;
+    if(authUser) {
+        token = await verifySession(authUser.username, authUser.password);
+    } else {
+        showError('You must log in to modify a book.');
+        throw new Error('You must log in to modify a book.');
+    }
+
     let data = new FormData(editBookForm);
     let book = {
         book_name: data.get('book_name'),
@@ -510,7 +583,10 @@ async function saveBook(editBookForm, bookID) {
         let r = await fetch(
             apiUrl + 'library/' + bookID, {
                 method: "PUT",
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(book)
             }
         );
@@ -570,10 +646,46 @@ async function saveBook(editBookForm, bookID) {
 }
 
 async function deleteBook(id) {
-    
-    let response = await fetch(apiUrl + 'library/' + id, {method: 'DELETE'});
-    if (!response.ok) {
-        throw new Error('It cannot be deleted');
+
+    //En la consigna no se pedia el token para borrar, por eso no lo agregué (para no entorpecer durante la corrección).
+    //Sin embargo, para que el front me quedara "lógico", el botón de eliminar está oculto para que el usuario que no esté logueado
+    //no lo vea y simular que fuera por una comprobación de token.
+    //Dejo comentado el codigo (acá y en la función deleteBook del controlador) por si lo quieren probar.
+
+    // let token;
+    // if(authUser) {
+    //     token = await verifySession(authUser.username, authUser.password);
+    // } else {
+    //     showError('You must log in to modify a book.');
+    //     throw new Error('You must log in to modify a book.');
+    // }
+    // try {
+    //     let response = await fetch(apiUrl + 'library/' + id, {
+    //         method: 'DELETE',
+    //         headers: {
+    //             'Authorization': 'Bearer ' + token,
+    //             'Content-Type': 'application/json'
+    //         }
+    //     });
+    //     if (!response.ok) {
+    //         const r = response.text;
+    //         console.log(r);
+    //         throw new Error('It cannot be deleted');
+    //     }
+    //     console.log('successfully deleted');
+    // } catch (error) {
+    //     console.log(error);
+    // }
+    // getLibrary();
+        
+
+    try {
+        let response = await fetch(apiUrl + 'library/' + id, {method: 'DELETE'});
+        if (!response.ok) {
+            throw new Error('It cannot be deleted');
+        }
+    } catch (error) {
+        console.log(error);
     }
     getLibrary();
 }
@@ -689,6 +801,11 @@ async function getAuthors(orderby = null) {
 }
 
 async function displayAuthors(orderby) {
+    let token;
+    if(session) {
+        token = await verifySession(authUser.username, authUser.password);
+    }
+
     let bigBox;
     try {
         const r = await fetch('authors.html');
@@ -748,8 +865,7 @@ async function displayAuthors(orderby) {
                         ">
                             Know more
                         </a>
-                        <!-- <?php if(isset($_SESSION['username'])): ?> -->
-                            <div>
+                            <div class="actionsBox">
                                 <a data-author="${author.author_id}" class="card-link edit-btn">
                                     Editar
                                 </a>
@@ -757,7 +873,6 @@ async function displayAuthors(orderby) {
                                     Borrar
                                 </a>
                             </div>
-                        <!-- <?php endif; ?> -->
                     </div>
                 </div>
             </div>
@@ -821,6 +936,14 @@ async function displayAuthors(orderby) {
         displayAddAuthorForm();
     });
 
+    if(!token) {
+        addAuthorBTN.style.display = 'none';
+        const actionsBox = document.querySelectorAll('.actionsBox');
+        for (const box of actionsBox) {
+            box.style.display = 'none';
+        }
+    }
+
     const authorsSelect = document.querySelector('#orderByAuthors');
     if(authorsSelect !== null) {
         authorsSelect.addEventListener('change', (e) => {
@@ -841,6 +964,14 @@ async function displayAuthors(orderby) {
 ////////////////////////////////////////////////////////////////////////
 
 async function displayAddAuthorForm() {
+
+    let token;
+    if(authUser) {
+        token = await verifySession(authUser.username, authUser.password);
+    } else {
+        showError('You must log in to modify an author.');
+        throw new Error('You must log in to modify an author.');
+    }
 
     try {
 
@@ -872,6 +1003,15 @@ async function displayAddAuthorForm() {
     }
 }
 async function displayEditAuthorForm(id) {
+
+    let token;
+    if(authUser) {
+        token = await verifySession(authUser.username, authUser.password);
+    } else {
+        showError('You must log in to modify an author.');
+        throw new Error('You must log in to modify an author.');
+    }
+
     const main = document.querySelector('#main');
     let author;
     try {
@@ -964,6 +1104,14 @@ async function displayEditAuthorForm(id) {
 //////////////////////////////////////////////////////////////////////////////////
 
 async function submitAuthor(addAuthorForm) {
+    let token;
+    if(authUser) {
+        token = await verifySession(authUser.username, authUser.password);
+    } else {
+        showError('You must log in to add an author.');
+        throw new Error('You must log in to add an author.');
+    }
+
     let data = new FormData(addAuthorForm);
    
     try {
@@ -973,6 +1121,9 @@ async function submitAuthor(addAuthorForm) {
         let r = await fetch(
             apiUrl + 'authors', {
                 method: "POST",
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
                 body: data
             }
         );
@@ -994,6 +1145,39 @@ async function submitAuthor(addAuthorForm) {
 }
 
 async function deleteAuthor(id) {
+
+    //En la consigna no se pedia el token para borrar, por eso no lo agregué (para no entorpecer durante la corrección).
+    //Sin embargo, para que el front me quedara "lógico", el botón de eliminar está oculto para que el usuario que no esté logueado
+    //no lo vea y simular que fuera por una comprobación de token.
+    //Dejo comentado el codigo (acá y en la función deleteBook del controlador) por si lo quieren probar.
+
+    // let token;
+    // if(authUser) {
+    //     token = await verifySession(authUser.username, authUser.password);
+    // } else {
+    //     showError('You must log in to modify an author.');
+    //     throw new Error('You must log in to modify an author.');
+    // }
+    // try {
+    //     let response = await fetch(apiUrl + 'authors/' + id, {
+    //         method: 'DELETE',
+    //         headers: {
+    //             'Authorization': 'Bearer ' + token,
+    //             'Content-Type': 'application/json'
+    //         }
+    //     });
+    //     if (!response.ok) {
+    //         const r = response.text;
+    //         console.log(r);
+    //         throw new Error('It cannot be deleted');
+    //     }
+    //     console.log('successfully deleted');
+    // } catch (error) {
+    //     console.log(error);
+    // }
+    // getAuthors();
+
+
     try {
         const r = await fetch(apiUrl + 'authors/' + id, { method: 'DELETE' });
         if(!r.ok) {
@@ -1008,6 +1192,14 @@ async function deleteAuthor(id) {
 }
 
 async function saveAuthor(editAuthorForm, id) {
+    let token;
+    if(authUser) {
+        token = await verifySession(authUser.username, authUser.password);
+    } else {
+        showError('You must log in to modify an author.');
+        throw new Error('You must log in to modify an author.');
+    }
+
     const data = new FormData(editAuthorForm);
     let author = {
         author_name: data.get('author_name'),
@@ -1019,7 +1211,10 @@ async function saveAuthor(editAuthorForm, id) {
         const r = await fetch(
             apiUrl + 'authors/' + id, {
                 method: "PUT",
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(author)
             });
         console.log(author);
@@ -1200,7 +1395,7 @@ function loginForm() {
                     <input
                     type="text"
                     class="form-control"
-                    name="username">
+                    name="user_username">
                 </div>
                 <br>
                 <div class="form-group">
@@ -1208,7 +1403,7 @@ function loginForm() {
                     <input
                     type="password"
                     class="form-control"
-                    name="password">
+                    name="user_password">
                 </div>
 
                 <div class="d-flex justify-content-center">
@@ -1236,87 +1431,83 @@ function loginForm() {
     let loginFormData = document.querySelector('#login-form');
     loginFormData.addEventListener('submit', (e) => {
         e.preventDefault();
-        // submitLogin(loginFormData);
-        console.log('hacer funcion submitLogin');
+        submitLogin(loginFormData);
     });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/* <div class="form-group">
-    <label style="font-weight: bold;">Author's photo</label>
-    <input
-    type="file"
-    name="author_img"
-    id="">
-</div>
-<br> */}
-
-
-// async function saveAuthor(editAuthorForm, id) {
-//     const data = new FormData(editAuthorForm);
-//     if(data.get('author_img') && data.get('author_img').size === 0) {
-//         let image = null;
-//         let author = {
-//             author_name: data.get('author_name'),
-//             author_age: data.get('author_age'),
-//             author_activity: data.get('author_activity'),
-//             author_img: image
-//         };
+async function submitLogin(loginFormData) {
+    const data = new FormData(loginFormData);
     
-//         try {
-//             const r = await fetch(
-//                 apiUrl + 'authors/' + id, {
-//                     method: "PUT",
-//                     headers: { 'Content-Type': 'application/json' },
-//                     body: JSON.stringify(author)
-//                 });
-//             console.log(author);
-//             if(!r.ok) {
-//                 let errorText = await r.text();
-//                 console.error('Server Error:', errorText);
-//                 throw new Error('The author could not be updated.');
-//             }
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     } else {
-//         try {
-//             console.log('AUTOR');
-//             console.log(data.get('author_img'));
-//             for (let [key, value] of data.entries()) {
-//                 console.log(`${key}: ${value}`);
-//             }
-//             const r = await fetch(
-//                 apiUrl + 'authors/' + id, {
-//                     method: "PUT",
-//                     body: data
-//                 });
-            
-//             if(!r.ok) {
-//                 let errorText = await r.text();
-//                 console.error('Server Error:', errorText);
-//                 throw new Error('The author could not be updated.');
-//             }
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
-
+    const user = {
+        user_username: data.get('user_username'),
+        user_password: data.get('user_password')
+    };
     
-//     getAuthors();
-// }
+    try {
+        const r = await fetch(apiUrl + 'user/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user)
+        });
+
+        if(!r.ok) {
+            throw new Error('Login has failed.');
+        }
+        const response = await r.json();
+        const loggedUser = JSON.stringify(response);
+        localStorage.setItem('userSession', loggedUser);
+
+        location.reload();
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+function logout() {
+    localStorage.removeItem('userSession');
+    console.log('User logged out.');
+
+    location.reload();
+}
+
+async function getToken(user, pass) {
+    let token = "";
+    try {
+        const r = await fetch(apiUrl + 'user/token', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + user + ':' + pass,
+                'Content-Type': 'application/json'
+            }
+        });
+        if(!r.ok) {
+            throw new Error('The authentication has failed.');
+        }
+        token = await r.text();
+        
+    } catch (error) {
+        console.log(error);
+    }
+    return token;
+}
+
+async function verifySession() {
+    let token = authUser.user_token;
+    if(!token) {
+        token = await getToken(authUser.username, authUser.password);
+        if(token) {
+            authUser.user_token = token;
+            localStorage.setItem('userSession', JSON.stringify(authUser));
+        } else {
+            throw new Error('Token could not be verified.');
+        }
+    }
+    return token;
+}
+
+function showError(error) {
+    const main = document.querySelector('#main');
+    main.innerHTML = error;
+}

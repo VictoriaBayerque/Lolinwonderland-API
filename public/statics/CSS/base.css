@@ -55,3 +55,7 @@ a:hover {
 .bFromHome-btn, .aFromHome-btn {
     color:rgb(165, 56, 107);
 }
+
+.actionsBox, .add-btn {
+    display: block;
+}

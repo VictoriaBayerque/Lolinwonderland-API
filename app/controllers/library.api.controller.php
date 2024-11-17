@@ -2,17 +2,21 @@
     require_once './app/models/library.model.php';
     require_once './app/models/authors.model.php';
     require_once './app/views/json.view.php';
+    require_once './helpers/auth.api.helper.php';
 
     class LibraryController {
         private $model;
         private $view;
+        private $authHelper;
 
         public function __construct() {
             $this->model = new libraryModel();
             $this->view = new JSONView();
             $this->authorModel = new authorsModel();
+            $this->authHelper = new AuthHelper();
         }
         public function getAllBooks($req, $res) {
+
             $authorFilter = null;
             if(isset($req->query->author)) {
                 $authorFilter = $req->query->author;
@@ -38,6 +42,11 @@
 
         public function addBook($req, $res) {
             
+            $user = $this->authHelper->currentUserData();
+            if(!$user) {
+                return $this->view->response('Unauthorized user.', 401);
+            }
+
             if(
                 empty($req->body->book_name) ||
                 empty($req->body->book_authorid) ||
@@ -69,6 +78,16 @@
 
 
         public function deleteBook($req, $res) {
+            //En la consigna no se pedia el token para borrar, por eso no lo agregué (para no entorpecer durante la corrección).
+            //Sin embargo, para que el front me quedara "lógico", el botón de eliminar está oculto para el usuario que no esté logueado,
+            //para simular que hubiera una comprobación de token.
+            //Dejo comentado el codigo (acá y en la función deleteAuthor de app.js) por si lo quieren probar.
+
+            // $user = $this->authHelper->currentUserData();
+            // if(!$user) {
+            //     return $this->view->response('Unauthorized user.', 401);
+            // }
+            
             $id = $req->params->id;
             $book = $this->model->getBook($id);
 
@@ -81,6 +100,12 @@
         }
 
         public function updateBook($req, $res) {
+
+            $user = $this->authHelper->currentUserData();
+            if(!$user) {
+                return $this->view->response('Unauthorized user.', 401);
+            }
+
             $id = $req->params->id;
             $book = $this->model->getBook($id);
             if(!$book) {

@@ -1,90 +1,74 @@
 <?php
 include_once './app/models/user.model.php';
 include_once './app/views/json.view.php';
-// include_once './app/views/auth.view.php';
+include_once './helpers/auth.api.helper.php';
 
 class UserController {
 
     private $model;
     private $view;
+    private $authHelper;
 
     public function __construct() {
         $this->model = new UserModel();
         $this->view = new JSONView();
-        // $this->authView = new AuthView();
+        $this->authHelper = new AuthHelper();
     }
 
-    // public function showRegisterForm() {
-    //     $this->view->displayRegisterForm();
-    // }
-    // public function registerUser() {
-    //     if(
-    //         !isset($_POST['name']) || empty($_POST['name']) ||
-    //         !isset($_POST['lastname']) || empty($_POST['lastname']) ||
-    //         !isset($_POST['email']) || empty($_POST['email']) ||
-    //         !isset($_POST['username']) || empty($_POST['username']) ||
-    //         !isset($_POST['password']) || empty($_POST['password'])
-    //     ) {
-    //         $this->view->showError("You must complete all the fields to complete the registration.");
-    //         die();
-    //     }
-    //     else {
-    //         $pass = password_hash($_POST['password'], PASSWORD_BCRYPT);
-    //         $this->model->insertUser(
-    //             $_POST['name'],
-    //             $_POST['lastname'],
-    //             $_POST['email'],
-    //             $_POST['username'],
-    //             $pass);
-    //     }
-    //     header("Location: " . BASE_URL);
-    // }
-    // public function showLoginForm() {
-    //     $this->view->displayLoginForm();
-    // }
-    // public function loginUser() {
-    //     if (
-    //         !isset($_POST['username']) ||
-    //         empty($_POST['username'])
-    //     ) {
-    //         return $this->authView->authError('You must write your username');
-    //     }
-    //     if (
-    //         !isset($_POST['password']) ||
-    //         empty($_POST['password'])
-    //     ) {
-    //         return $this->authView->authError('You must write your password');
-    //     }
+    public function getPermissionWithToken($req, $res) {
+        
+        $basic = $this->authHelper->getAuthHeader();
 
-    //     $user = $this->model->getUser($_POST['username']);
+        if (empty($basic)) {
+            return $this->view->response('Missing authentication data', 401);
+        }
 
-    //     if (
-    //         isset($user) &&
-    //         $user != null &&
-    //         password_verify($_POST['password'], $user->user_password)
-    //     ) {
-    //         session_start();
-    //         $_SESSION['userId'] = $user->user_id;
-    //         $_SESSION['username'] = $user->user_username;
+        $basic = explode(' ', $basic);
+        if ($basic[0] != "Basic") {
+            return $this->view->response('Wrong authentication headers.', 401);
+        }
 
-    //         header("Location: " . BASE_URL);
-    //     } else {
-    //         $this->authView->authError('You could not login into your account. Please, try again.');
-    //     }
-    // }
-    // public function logoutUser() {
-    //     session_start();
-    //     session_destroy();
-    //     header("Location: " . BASE_URL);
-    // }
+        $userpass = base64_decode($basic[1]);
+        $userpass = explode(':', $userpass);
 
-    // function sessionVerify($data) {
-    //     session_start();
-    //     if(isset($_SESSION['userId'])) {
-    //         return "block";
-    //     } else {
-    //         return ;
-    //         die();
-    //     }
-    // }
+        $userDB = $this->model->getUser($userpass[0]);
+
+        if(!$userDB) {
+            return $this->view->response('The user does not exist in the database', 404);
+        }
+
+        if (!password_verify($userpass[1], $userDB->user_password)) {
+            return $this->view->response('The password is not correct. Please, try again', 401);
+        }
+
+        $data = $this->authHelper->getToken($userDB);
+        $token = $data[2];
+
+        return $this->view->response($token);
+    }
+
+    public function getSessionWithLogin($req, $res) {
+
+        if (empty($req->body->user_username) || empty($req->body->user_password)) {
+            return $this->view->response('Missing username or password.', 400);
+        }
+
+        $user = $req->body->user_username;
+        $pass = $req->body->user_password;
+
+        $userDB = $this->model->getUser($user);
+
+        if(!$userDB) {
+            return $this->view->response('The user does not exist in the database', 404);
+        }
+
+        if (!password_verify($pass, $userDB->user_password)) {
+            return $this->view->response('The password is not correct. Please, try again', 401);
+        }
+
+        $data = $this->authHelper->getToken($userDB);
+        //  
+
+        return $this->view->response($data);
+    }
 }

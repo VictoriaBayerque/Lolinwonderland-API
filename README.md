@@ -53,7 +53,7 @@ Ejemplo:
         (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
                 
 - endpoint: 'library/:id', verbo: 'PUT'.
-Con este endpoint y utilizando el verbo PUT, llamaremos a la función updateBook de LibraryController para poder cambiar los datos del libro de la base de datos que corresponda al id proporcionado por parámetro.
+Con este endpoint y utilizando el verbo PUT, llamaremos a la función updateBook de LibraryController para poder cambiar todos los datos -a excepción de la imagen- del libro de la base de datos que corresponda al id proporcionado por parámetro.
 Ejemplo:
 
         http://localhost/Web2/3er-entrega/api/library/1
@@ -93,7 +93,7 @@ Ejemplo:
         (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
                 
 - endpoint: 'authors/:id', verbo: 'PUT'.
-Con este endpoint y utilizando el verbo PUT, llamaremos a la función updateAuthor de AuthorsController para poder cambiar los datos del autor de la base de datos que corresponda al id proporcionado por parámetro.
+Con este endpoint y utilizando el verbo PUT, llamaremos a la función updateAuthor de AuthorsController para poder cambiar los datos del autor -a excepción de la imagen- de la base de datos que corresponda al id proporcionado por parámetro.
 Ejemplo:
 
         http://localhost/Web2/3er-entrega/api/authors/1

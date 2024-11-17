@@ -1,5 +1,5 @@
 <?php
-require_once "./app/controllers/user.controller.php";
+require_once "./app/controllers/user.api.controller.php";
 
 class UserModel {
     private $db;
