@@ -7,16 +7,28 @@ Importar el archivo 'lolinwonderland_db.sql' dentro de PHPMyAdmin.
 # Usuario admin.
 Username: webadmin
 Password: admin
+# Usuarios opcionales:
+Username: ladypanther
+Password: lala
+
+Username: blackcat
+Password: lala
 
 # Dinámica de la web.
-Es un sitio donde se recopilan reseñas literarias de diferentes autores. Se puede acceder al listado completo de libros almacenados en la base de datos, así como ingresar y ver en detalle individualmete. Además, se pueden modificar datos o eliminar cualquiera de ellos. Lo mismo sucede con los autores ingresados en la base de datos, los cuales pueden verse juntos o por separado y modificarse o eliminarse, según se requiera.
+Es un sitio donde se recopilan reseñas literarias de diferentes autores. Se puede acceder al listado completo de libros almacenados en la base de datos, a los que se puede ingresar y ver en detalle individualmete. Además, se pueden modificar datos -a excepción de la imagen- o eliminar cualquiera de ellos. Lo mismo sucede con los autores ingresados en la base de datos, los cuales pueden verse juntos o por separado y modificarse o eliminarse, según se requiera.
+Para los libros, se puede solicitar que se ordenen según nombre, saga(series) o autor. Además, se los puede paginar cada 10 libros. Y se puede requerir libros según su autor.
+Para los autores, se pueden ordenar según todos sus campos (nombre, edad y actividad).
 Al crear un libro, debe ingresarse el autor mediante un select, por lo que será necesario crear primero el autor de no encontrarse en la base de datos aún.
-Las funciones de añadir, modificar y eliminar tanto libros como autores solo podrán ser llevadas a cabo por el usuario administrador logueado. Si no se está logueado, ni siquiera podrán verse los botones correspondientes a cada función y/o vista.
+
+
+Tanto para libros como para autores, para poder añadir o modificarlos se tendrá que estar logueado porque se hará una verificación del token de la sesión. En la parte del front, los botones para agregar y modificar se mantendrán ocultos hasta que se inicie sesión. Y, si bien para eliminar no está la verificación del token y, por ende, no se necesita estar logueado (pues no era la consigna y no quise entorpecer la corrección), el front mantendrá oculto el botón hasta que el usuario inicie sesión para mantener la lógica.
+El front requerirá los datos del usuario que quedarán almacenados en el localstorage.
+
 
 # Endpoints.
 La API cuenta con distintos endpoints para poder manipular los datos almacenados en la base de datos.
 - DATO IMPORTANTE a tener en cuenta.
-En el archivo "public/statics/JS/app.js", la URL base (es decir: 'http://localhost/Web2/3er-entrega/api/') está asignada a la constante apiUrl, por lo que debe ser modificada antes de correr el código.
+En el archivo "public/statics/JS/app.js", la URL base (es decir: 'http://localhost/Web2/3er-entrega/api/') está asignada a la constante apiUrl, por lo que debe ser modificada antes de correr el código si se va a usar el front.
 
 - endpoint: 'library' y verbo: 'GET'.
 Con este endpoint y utilizando un verbo GET, llamamos a la función getAllBooks de LibraryController y conseguimos traer todos los libros que esten en la tabla de library.
@@ -97,6 +109,22 @@ Con este endpoint y utilizando el verbo PUT, llamaremos a la función updateAuth
 Ejemplo:
 
         http://localhost/Web2/3er-entrega/api/authors/1
+            
+        (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
+
+- endpoint: 'user/token', verbo: 'GET'.
+Con este endpoint y utilizando el verbo GET, llamaremos a la función getPermissionWithToken de UserController para poder verificar el usuario y generar un token cuando la solicitud sea GET.
+Ejemplo:
+
+        http://localhost/Web2/3er-entrega/api/user/token
+            
+        (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
+
+- endpoint: 'user/token', verbo: 'POST'.
+Con este endpoint y utilizando el verbo POST, llamaremos a la función getSessionWithLogin de UserController para poder verificar el usuario y generar un token cuando la solicitud sea POST -formulario de inicio de sesión-.
+Ejemplo:
+
+        http://localhost/Web2/3er-entrega/api/user/token
             
         (recordando cambiar las carpetas entre 'localhost/' y '/api' según se tenga guardado de manera local dentro de htdocs en la declaracion de la constante apiUrl)
 

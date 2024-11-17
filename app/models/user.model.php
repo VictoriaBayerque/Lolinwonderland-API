@@ -15,10 +15,4 @@ class UserModel {
     
         return $user;
     }
-    public function insertUser ($user_name, $user_lastname, $user_email, $user_username, $user_password){
-        $query =$this->db-> prepare ('INSERT INTO Users (user_name, user_lastname, user_email, user_username, user_password) VALUES (?, ?, ?, ?, ?)');
-        $query ->execute ([$user_name, $user_lastname, $user_email, $user_username, $user_password]);
-        
-        return $this->db->lastInsertId();
-    }
 }

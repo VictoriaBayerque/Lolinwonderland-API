@@ -15,7 +15,7 @@ const authUser = JSON.parse(session);
 async function home() {
 
     try {
-        const response = await fetch('http://localhost/Web2/3er-entrega/home.html');
+        const response = await fetch('templates/home.html');
 
         if(!response.ok) {
             throw new Error('Home could not be loaded.');
@@ -92,12 +92,15 @@ if(!authUser) {
 ///------------------------------ LIBRARY ------------------------------///
 //////////////////////////////////////////////////////////////////////////
 
-async function getLibrary(orderby = null) {
-    
-    if(orderby !== null) {
+async function getLibrary(page, orderby) {
+    if(page == null) {
+        page = 1;
+    }
+    if(orderby != null) {
         try {
-            const responseLibrary = await fetch(apiUrl + 'library?order=' + orderby);
-    
+            console.log(orderby);
+            const responseLibrary = await fetch(apiUrl + 'library?page=' + page + '& order=' + orderby);
+            
             if(!responseLibrary.ok) {
                 throw new Error('There was an error. Library could have not been listed.');
             }
@@ -108,18 +111,17 @@ async function getLibrary(orderby = null) {
         }
     } else {
         try {
-
-            const responseLibrary = await fetch(apiUrl + 'library');
+            const responseLibrary = await fetch(apiUrl + 'library?page=' + page);
             if(!responseLibrary.ok) {
+                const r = responseLibrary.text();
+                console.log(r);
                 throw new Error('There was an error. Library could have not been listed.');
             }
 
             library = await responseLibrary.json();
 
         } catch (error) {
-
             console.log(error);
-
         }
     }
     const responseAuthors = await fetch(apiUrl + 'authors');
@@ -142,6 +144,35 @@ function sliceSummary (summary) {
     }
 }
 
+async function pages() {
+    let total;
+    try{
+        const r = await fetch(apiUrl + 'library');
+        if(!r.ok) {
+            throw new Error('Unknown page numbers');
+        }
+        total = await r.json();
+    } catch (error) {
+        console.log(error);
+    }
+
+    let totalPages = Math.ceil(total.length / 10);
+    if(total.length < 10) {
+        totalPages = 1;
+    }
+    const pagesBooks = document.querySelector('#pages');
+    
+    for (let i = 1; i <= totalPages; i++) {
+        pagesBooks.innerHTML += `
+        <li class="page-item">
+            <a class="page-link page-btn" data-page="${i}">
+            ${i}
+            </a>
+        </li>
+        `;
+    }
+}
+
 async function displayLibrary(orderby = null) {
     let token;
     if(session) {
@@ -151,8 +182,7 @@ async function displayLibrary(orderby = null) {
 
     let bigBox = "";
     try {
-
-        const r = await fetch('library.html');
+        const r = await fetch('templates/library.html');
 
         if(!r.ok) {
             throw new Error('Library container could not be loaded.');
@@ -161,9 +191,7 @@ async function displayLibrary(orderby = null) {
         bigBox = await r.text();
 
     } catch (error) {
-
         console.log(error);
-
     }
     
     let main = document.querySelector('#main');
@@ -245,6 +273,17 @@ async function displayLibrary(orderby = null) {
         libraryContainer.innerHTML += newhtml;
 
     }
+    
+    const pagesHTML = `
+        <br>
+        <nav aria-label="...">
+            <ul class="d-flex flex-row justify-content-center" id="pages">
+            </ul>
+        </nav>
+    `;
+    
+    libraryContainer.innerHTML += pagesHTML;
+
     const addBookBtn = `
         </br>
         <div
@@ -266,6 +305,8 @@ async function displayLibrary(orderby = null) {
     `;
 
     libraryContainer.innerHTML += addBookBtn;
+
+    await pages();
 
     const addBookBTN = document.querySelector('.add-btn');
     addBookBTN.addEventListener('click', (e) => {
@@ -309,7 +350,7 @@ async function displayLibrary(orderby = null) {
                 orderBySelect.value === 'author' ||
                 orderBySelect.value === 'series'
             ) {
-                getLibrary(orderBySelect.value);
+                getLibrary(null, orderBySelect.value);
             }
         });
     }
@@ -321,8 +362,16 @@ async function displayLibrary(orderby = null) {
             box.style.display = 'none';
         }
     }
-    
+    const pagesBTN = document.querySelectorAll('.page-btn');
+    for (const btn of pagesBTN) {
+        const page = btn.getAttribute('data-page');
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            getLibrary(page, orderby);
+        });
+    }
 }
+
 
 ////////////////////////////////////////////////////////////////////////
 ///------------------------------ FORMS ------------------------------///
@@ -337,7 +386,7 @@ async function displayAddBookForm() {
     }
     try {
 
-        const response = await fetch('form_addbook.html');
+        const response = await fetch('templates/form_addbook.html');
 
         if(!response.ok) {
             throw new Error('The form to add a new book could have not been displayed.');
@@ -382,9 +431,7 @@ async function authorsSelect() {
         document.querySelector('.authorsSelect').innerHTML = authorsSelect;
 
     } catch (error) {
-
         console.log(error);
-
     }
     
 }
@@ -575,8 +622,6 @@ async function saveBook(editBookForm, bookID) {
         book_summary: data.get('book_summary'),
     };
 
-    // if(data.get('book_img') && data.get('book_img').size === 0) {
-    console.log(JSON.stringify(book));
     try {
         
 
@@ -592,57 +637,14 @@ async function saveBook(editBookForm, bookID) {
         );
         
         if(!r.ok) {
-            let respuesta = await r;
-            console.log(respuesta);
             throw new Error('The book could not be updated.');
         }
         
         getLibrary();
 
     } catch (error) {
-
         console.log(error);
-
     }
-    // } else {
-    //     try {
-    //         console.log(data.get('book_img'));
-    //         const img = data.get('book_img');
-    //         book.book_img = {
-    //             name: img.name,
-    //             tmp_name: img.lastModified,
-    //             lastModifiedDate: img.lastModifiedDate,
-    //             size: img.size,
-    //             type: img.type,
-    //         };
-    //         let r = await fetch(
-    //             apiUrl + 'library/' + bookID, {
-    //                 method: "PUT",
-    //                 headers: { 'Content-Type': 'application/json'},
-    //                 body: JSON.stringify(book)
-    //             }
-    //         );
-    //         let responseText = await r.text(); 
-    //         console.log('Response from server:', responseText);
-    //         if(!r.ok) {
-    //             let errorText = await r.text();
-    //             console.log('ERROR:', errorText);
-    //             throw new Error('Server error');
-    //         }
-    //         // try {
-    //         //     let editedBook = JSON.parse(responseText);
-    //         //     console.log(editedBook);
-    //         // } catch (jsonError) {
-    //         //     console.error('Error parsing JSON:', jsonError);
-    //         // }
-            
-            
-    //     } catch (error) {
-
-    //         console.log(error);
-
-    //     }
-    // }
 }
 
 async function deleteBook(id) {
@@ -711,7 +713,7 @@ async function readMore(id) {
     } catch (error) {
         console.log(error);
     }
-    
+    let prettySummary = book.book_summary.replace(/\n/g, '<br>');
     let html = `
         <div class="container">
             <div class="card-body justify-content-center">
@@ -724,7 +726,7 @@ async function readMore(id) {
                     <h5 class="card-title">${book.book_name}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">${author.author_name}</h6>
                     <h6 class="card-subtitle mb-2 text-muted">Series: ${book.book_series} (book number ${book.book_seriesnumber} in the series)</h6>
-                    <p class="card-text">${book.book_summary}</p>
+                    <p class="card-text" style="margin-top: 3rem;">${prettySummary}</p>
                 </div>
             </div>
             <div class="d-flex justify-content-end"style="margin-top: 4rem; margin-bottom: 5rem;">
@@ -808,7 +810,7 @@ async function displayAuthors(orderby) {
 
     let bigBox;
     try {
-        const r = await fetch('authors.html');
+        const r = await fetch('templates/authors.html');
         if(!r.ok) {
             throw new Error('The page could not be found.');
         }
@@ -975,7 +977,7 @@ async function displayAddAuthorForm() {
 
     try {
 
-        const response = await fetch('form_addauthor.html');
+        const response = await fetch('templates/form_addauthor.html');
 
         if(!response.ok) {
             throw new Error('The form to add a new author could have not been displayed.');
@@ -1219,8 +1221,6 @@ async function saveAuthor(editAuthorForm, id) {
             });
         console.log(author);
         if(!r.ok) {
-            let errorText = await r.text();
-            console.error('Server Error:', errorText);
             throw new Error('The author could not be updated.');
         }
     } catch (error) {

@@ -59,3 +59,7 @@ a:hover {
 .actionsBox, .add-btn {
     display: block;
 }
+
+#pages {
+    list-style: none;
+}

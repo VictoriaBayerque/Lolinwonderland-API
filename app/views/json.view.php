@@ -1,6 +1,7 @@
 <?php
 require_once './app/controllers/library.api.controller.php';
 require_once './app/controllers/authors.api.controller.php';
+require_once './app/controllers/user.api.controller.php';
 
     class JSONView {
         public function response($data, $status = 200) {

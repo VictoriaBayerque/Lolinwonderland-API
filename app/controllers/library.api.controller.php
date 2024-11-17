@@ -25,8 +25,12 @@
             if (isset($req->query->order)) {
                 $orderBy = $req->query->order;
             }
+            $page = null;
+            if (isset($req->query->page)) {
+                $page = $req->query->page;
+            }
 
-            $library = $this->model->getLibrary($authorFilter, $orderBy);
+            $library = $this->model->getLibrary($authorFilter, $orderBy, $page);
 
             return $this->view->response($library);
         }

@@ -1,0 +1,82 @@
+<div class="container justify-content-center" style="width: 40%;">
+    <form
+    id="addbook-form"
+    method="POST"
+    enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label style="font-weight: bold;">Book's name</label>
+            <input
+            type="text"
+            class="form-control"
+            name="book_name"
+            placeholder="Enter the book">
+        </div>
+        <br>
+        <div class="form-group">
+            <label style="font-weight: bold;">Book's image</label>
+            <input
+            type="file"
+            name="book_img"
+            id="">
+        </div>
+        <br>
+        <div class="form-group">
+            <label style="font-weight: bold;">Select the author</label>
+            <select
+            class="form-control form-control-lg authorsSelect"
+            name="book_authorid">
+            </select>
+        </div>
+        <br>
+        <div class="form-group">
+            <label style="font-weight: bold;">Series</label>
+            <input
+            type="text"
+            class="form-control"
+            name="book_series"
+            placeholder="Enter the series">
+        </div>
+        <br>
+        <div class="form-group">
+            <label style="font-weight: bold;">Number of the book in the series</label>
+            <input
+            type="number"
+            class="form-control"
+            name="book_seriesnumber"
+            placeholder="Enter the number of the book">
+        </div>
+        <br>
+        <div class="form-group">
+            <label style="font-weight: bold;">Book's summary</label>
+            <textarea
+            type="textarea"
+            class="form-control"
+            name="book_summary"
+            placeholder="Enter the summary"></textarea>
+        </div>
+        <br>
+        <div class="d-flex justify-content-center">
+            <button
+            type="submit"
+            style="
+            background-color: rgb(165, 56, 107);
+            margin-bottom: 5rem;
+            margin-right: 2rem;
+            padding: 0.3rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            border: 0px;
+            border-radius: 0.4rem;
+            color: white;
+            ">
+                Submit
+            </button>
+            <a
+            class="goBack-form">
+                Go back
+            </a>
+        </div>
+    </form>
+
+</div>

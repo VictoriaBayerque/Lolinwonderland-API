@@ -42,14 +42,16 @@ class UserController {
         }
 
         $data = $this->authHelper->getToken($userDB);
-        $token = $data[2];
+        $token = $data['user_token'];
 
         return $this->view->response($token);
     }
 
     public function getSessionWithLogin($req, $res) {
-
+        
         if (empty($req->body->user_username) || empty($req->body->user_password)) {
+            var_dump('USER ', $req->body->user_username);
+            var_dump('PASS ', $req->body->user_password);
             return $this->view->response('Missing username or password.', 400);
         }
 

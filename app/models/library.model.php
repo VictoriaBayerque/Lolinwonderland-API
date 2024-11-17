@@ -7,7 +7,7 @@ require_once "./app/controllers/library.api.controller.php";
             $this->db = new PDO('mysql:host=localhost;dbname=Lolinwonderland_db;charset=utf8', 'root', '');
         }
 
-        public function getLibrary($authorFilter = null, $orderBy = null){
+        public function getLibrary($authorFilter = null, $orderBy = null, $page = null){
             $sql = 'SELECT * FROM Books';
 
             if($authorFilter !== null) {
@@ -26,6 +26,12 @@ require_once "./app/controllers/library.api.controller.php";
                         $sql .= ' ORDER BY book_series';
                         break;
                 }
+            }
+
+            if($page != null) {
+                $booksPerPage = 10;
+                $booksStart = ($page - 1) * $booksPerPage;
+                $sql .= ' LIMIT ' . $booksPerPage . ' OFFSET ' . $booksStart;
             }
 
             $query = $this->db->prepare($sql);
@@ -79,18 +85,3 @@ require_once "./app/controllers/library.api.controller.php";
             $query->execute([$book_name, $book_authorid, $book_series, $book_seriesnumber, $book_summary, $book_id]);
         }
 }
-
-
-
-// public function updateBook($book_id, $book_name, $book_authorid, $book_series, $book_seriesnumber, $book_summary, $book_img = null) {
-//     $newFileName = null;
-//     if ($book_img) {
-//         $newFileName = $this->moveImg($book_img);
-        
-//         $query = $this->db->prepare('UPDATE Books SET book_name = ?, book_authorid = ?, book_series = ?, book_seriesnumber = ?, book_summary = ?, book_img = ? WHERE book_id = ?');
-//         $query->execute([$book_name, $book_authorid, $book_series, $book_seriesnumber, $book_summary, $newFileName, $book_id]);
-//     } else {
-//         $query = $this->db->prepare('UPDATE Books SET book_name = ?, book_authorid = ?, book_series = ?, book_seriesnumber = ?, book_summary = ? WHERE book_id = ?');
-//         $query->execute([$book_name, $book_authorid, $book_series, $book_seriesnumber, $book_summary, $book_id]);
-//     }
-// }

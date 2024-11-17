@@ -52,16 +52,18 @@ require_once "./app/controllers/authors.api.controller.php";
             
             return $this->db->lastInsertId();
         }
-        private function moveImg($authorimg) {
-            if(is_array($authorimg)) {
-                $newFileName = uniqid() . "." . strtolower(pathinfo($authorimg['name'], PATHINFO_EXTENSION));
+
+        private function moveImg($img) {
+            if(is_array($img)) {
+                $newFileName = uniqid() . "." . strtolower(pathinfo($img['name'], PATHINFO_EXTENSION));
                 $filepath = "./public/statics/images/authors/" . $newFileName ;
-                move_uploaded_file($authorimg['tmp_name'], $filepath);
+                move_uploaded_file($img['tmp_name'], $filepath);
             }
-            if(is_string($authorimg)) {
-                $newFileName = uniqid() . "." . strtolower(pathinfo($authorimg, PATHINFO_EXTENSION));
+            if(is_string($img)) {
+                $newFileName = uniqid() . "." . strtolower(pathinfo($img, PATHINFO_EXTENSION));
                 $filepath = "./public/statics/images/authors/" . $newFileName ;
             }
+            
             return $newFileName;
         }
 
@@ -71,16 +73,7 @@ require_once "./app/controllers/authors.api.controller.php";
         }
 
         function updateAuthor ($authorid, $author_name, $author_age, $author_activity){
-            // $newFileName = null;
-            // if ($author_img) {                   SI LO DESCOMENTO, TENGO QUE AGREGAR $AUTHOR_IMG EN LOS ARGUMENTOS
-            //     $newFileName = $this->moveImg($author_img);
-                
-            //     $query = $this->db->prepare('UPDATE Authors SET author_name = ?, author_age = ?, author_activity = ?, author_img = ? WHERE author_id = ?');
-            //     $query->execute([$author_name, $author_age, $author_activity, $newFileName, $authorid]);
-            // } else {
-                $query = $this->db->prepare('UPDATE Authors SET author_name = ?, author_age = ?, author_activity = ? WHERE author_id = ?');
-                $query->execute([$author_name, $author_age, $author_activity, $authorid]);
-            // }
-        }
-        
+            $query = $this->db->prepare('UPDATE Authors SET author_name = ?, author_age = ?, author_activity = ? WHERE author_id = ?');
+            $query->execute([$author_name, $author_age, $author_activity, $authorid]);    
+        } 
     }
